@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
-import api from '../api/axios';
+import { saveCard } from '../api';
 
 const SaveCard: React.FC = () => {
   const stripe = useStripe();
@@ -29,9 +29,7 @@ const SaveCard: React.FC = () => {
       }
 
       // Save to backend
-      await api.post('/payment/cards', {
-        paymentMethodId: paymentMethod.id
-      });
+      await saveCard({ paymentMethodId: paymentMethod.id });
 
       alert('Card saved successfully!');
       

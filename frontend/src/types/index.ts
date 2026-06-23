@@ -116,3 +116,8 @@ export interface SupabaseUser {
     address?: Address;
   };
 }
+// ============ WINDOW ============
+export interface WindowSize {
+  width: number;
+  height: number;
+}
