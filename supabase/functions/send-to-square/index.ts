@@ -33,10 +33,7 @@ serve(async (req: Request) => {
       });
     }
 
-    // ✅ Production URL
     const squareApiUrl = Deno.env.get("SQUARE_API_URL") ?? "https://connect.squareup.com";
-
-    // ✅ Production Secrets
     const accessToken = Deno.env.get("SQUARE_ACCESS_TOKEN");
     const locationId = Deno.env.get("SQUARE_LOCATION_ID");
 
@@ -52,9 +49,6 @@ serve(async (req: Request) => {
       (sum: number, item: any) => sum + ((item.price ?? 0) * (item.quantity ?? item.qty ?? 1)), 0
     );
     const tax = order.tax ?? (subtotal > 0 ? subtotal * 0.05 : 0);
-
-    const paymentMethod = order.payment_method ?? "cash";
-    const isCash = paymentMethod === "cash" || paymentMethod === "cash_on_pickup";
 
     const squareBody: any = {
       order: {
@@ -81,7 +75,7 @@ serve(async (req: Request) => {
           pickup_details: {
             note: [
               `Order #${order.order_number ?? order.id}`,
-              `Payment: ${isCash ? "CASH ON PICKUP" : "Card"}`,
+              `Payment: Card`,
               order.shipping_address?.notes ?? "",
             ].filter(Boolean).join(" | "),
             pickup_at: new Date(Date.now() + 15 * 60000).toISOString(),
@@ -98,7 +92,6 @@ serve(async (req: Request) => {
 
     console.log("Sending to Square:", JSON.stringify(squareBody));
 
-    // ✅ الخطوة 1: إنشاء الطلب بـ Square
     const squareRes = await fetch(`${squareApiUrl}/v2/orders`, {
       method: "POST",
       headers: {
@@ -122,40 +115,6 @@ serve(async (req: Request) => {
 
     const squareOrderId = squareData.order?.id;
 
-    // ✅ الخطوة 2: لو Cash — سجّل الدفع تلقائياً بـ Square
-    if (isCash && squareOrderId) {
-      const totalAmount = Math.round((order.total_amount ?? (subtotal + tax)) * 100);
-
-      const paymentRes = await fetch(`${squareApiUrl}/v2/payments`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-          "Square-Version": "2024-01-17",
-        },
-        body: JSON.stringify({
-          source_id: "CASH",
-          idempotency_key: `payment-${order.id}`,
-          amount_money: {
-            amount: totalAmount,
-            currency: "CAD",
-          },
-          order_id: squareOrderId,
-          location_id: locationId,
-          note: `Cash payment for Order #${order.order_number ?? order.id}`,
-        }),
-      });
-
-      const paymentData = await paymentRes.json();
-      console.log("Square payment response:", JSON.stringify(paymentData));
-
-      if (!paymentRes.ok) {
-        // الطلب اتسجل بـ Square بس الدفع فشل — مش كارثة، نسجّل ونكمل
-        console.error("Square payment error (non-fatal):", paymentData);
-      }
-    }
-
-    // ✅ الخطوة 3: حدّث الطلب بـ Supabase
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!

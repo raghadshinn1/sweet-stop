@@ -5,21 +5,19 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { 
   CreditCard, 
-  Banknote, 
   ArrowLeft, 
-  Check, 
   Truck,
   Clock,
   Loader2
 } from 'lucide-react';
 
-type PaymentMethod = 'cash' | 'card';
+type PaymentMethod = 'card';
 
 const PaymentPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { cartItems, totalPrice, clearCart } = useCart();
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
+  const { cartItems, totalPrice } = useCart();
+  const [paymentMethod] = useState<PaymentMethod>('card');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -36,7 +34,6 @@ const PaymentPage: React.FC = () => {
         return;
       }
 
-      // Create order in Supabase directly
       const orderData = {
         user_id: user.id,
         items: cartItems.map(item => ({
@@ -65,21 +62,12 @@ const PaymentPage: React.FC = () => {
       const { data, error: insertError } = await supabase
         .from('orders')
         .insert(orderData)
-        .select()
-        
+        .select();
 
       if (insertError) throw insertError;
 
       const orderId = data?.[0]?.id;
-
-      if (paymentMethod === 'card') {
-        navigate('/stripe-payment?order_id=' + orderId);
-        return;
-      }
-
-      // Cash on Pick Up - go directly to success
-      clearCart();
-      navigate('/payment-success?order_id=' + orderId);
+      navigate('/stripe-payment?order_id=' + orderId);
 
     } catch (err: any) {
       setError(err.message || 'Failed to place order');
@@ -195,101 +183,6 @@ const PaymentPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Payment Methods */}
-        <div style={{
-          background: 'white',
-          borderRadius: '16px',
-          padding: '24px',
-          marginBottom: '20px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
-        }}>
-          <h2 style={{ 
-            fontFamily: 'Poppins, sans-serif', 
-            color: '#3E2723', 
-            marginBottom: '20px',
-            fontSize: '18px'
-          }}>
-            Choose Payment Method
-          </h2>
-
-          {/* Cash Option */}
-          <label style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            padding: '20px',
-            borderRadius: '12px',
-            border: paymentMethod === 'cash' ? '2px solid #fa6193' : '2px solid #fce4ec',
-            background: paymentMethod === 'cash' ? '#fff5f8' : 'white',
-            cursor: 'pointer',
-            marginBottom: '12px',
-            transition: 'all 0.3s'
-          }}>
-            <input
-              type="radio"
-              name="payment"
-              value="cash"
-              checked={paymentMethod === 'cash'}
-              onChange={() => setPaymentMethod('cash')}
-              style={{ width: '20px', height: '20px', accentColor: '#fa6193' }}
-            />
-            <div style={{
-              width: '48px', height: '48px', borderRadius: '12px',
-              background: paymentMethod === 'cash' ? '#fa6193' : '#fce4ec',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <Banknote size={24} color={paymentMethod === 'cash' ? 'white' : '#fa6193'} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <h3 style={{ margin: 0, color: '#3E2723', fontFamily: 'Poppins, sans-serif', fontSize: '16px' }}>
-                Cash on Pick Up
-              </h3>
-              <p style={{ margin: '4px 0 0', color: '#666', fontSize: '13px', fontFamily: 'Poppins, sans-serif' }}>
-                Pay when you pick up your order
-              </p>
-            </div>
-            {paymentMethod === 'cash' && <Check size={24} color="#fa6193" />}
-          </label>
-
-          {/* Card Option */}
-          <label style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            padding: '20px',
-            borderRadius: '12px',
-            border: paymentMethod === 'card' ? '2px solid #fa6193' : '2px solid #fce4ec',
-            background: paymentMethod === 'card' ? '#fff5f8' : 'white',
-            cursor: 'pointer',
-            transition: 'all 0.3s'
-          }}>
-            <input
-              type="radio"
-              name="payment"
-              value="card"
-              checked={paymentMethod === 'card'}
-              onChange={() => setPaymentMethod('card')}
-              style={{ width: '20px', height: '20px', accentColor: '#fa6193' }}
-            />
-            <div style={{
-              width: '48px', height: '48px', borderRadius: '12px',
-              background: paymentMethod === 'card' ? '#fa6193' : '#fce4ec',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <CreditCard size={24} color={paymentMethod === 'card' ? 'white' : '#fa6193'} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <h3 style={{ margin: 0, color: '#3E2723', fontFamily: 'Poppins, sans-serif', fontSize: '16px' }}>
-                Credit / Debit Card
-              </h3>
-              <p style={{ margin: '4px 0 0', color: '#666', fontSize: '13px', fontFamily: 'Poppins, sans-serif' }}>
-                Use saved card or add new one
-              </p>
-            </div>
-            {paymentMethod === 'card' && <Check size={24} color="#fa6193" />}
-          </label>
-        </div>
-
         {/* Place Order Button */}
         <button
           onClick={handlePlaceOrder}
@@ -317,11 +210,6 @@ const PaymentPage: React.FC = () => {
               <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
               Processing...
             </>
-          ) : paymentMethod === 'cash' ? (
-            <>
-              Place Order - Cash on Pick Up
-              <Check size={20} />
-            </>
           ) : (
             <>
               Proceed to Card Payment
@@ -330,7 +218,6 @@ const PaymentPage: React.FC = () => {
           )}
         </button>
 
-        {/* Pickup Info */}
         <div style={{
           marginTop: '20px',
           textAlign: 'center',
@@ -343,10 +230,7 @@ const PaymentPage: React.FC = () => {
           fontFamily: 'Poppins, sans-serif'
         }}>
           <Clock size={16} />
-          {paymentMethod === 'cash' 
-            ? 'Thank you for your order! We\'re excited to prepare it for you 🍓'
-            : 'You will be redirected to select your saved card'
-          }
+          You will be redirected to enter your card details
         </div>
         
       </div>

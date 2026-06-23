@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Package, ArrowLeft, Clock, CheckCircle, CreditCard, Banknote, Sparkles } from 'lucide-react'
+import { Package, ArrowLeft, Clock, CheckCircle, CreditCard, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -68,10 +68,9 @@ const Orders: React.FC = () => {
     }
   }
 
-  const getPaymentIcon = (method: string) => {
-    if (method === 'card') return <CreditCard size={14} color="#fa6193" />
-    return <Banknote size={14} color="#fa6193" />
-  }
+  const getPaymentIcon = () => {
+  return <CreditCard size={14} color="#fa6193" />
+}
 
   const getStatusBadge = (status: string) => {
     if (status === 'paid') {
@@ -301,12 +300,12 @@ const Orders: React.FC = () => {
                     padding: '8px 16px', background: 'rgba(255,255,255,0.2)',
                     borderRadius: '50px', backdropFilter: 'blur(10px)'
                   }}>
-                    {getPaymentIcon(order.payment_method)}
+                   {getPaymentIcon()}
                     <span style={{ 
                       color: 'white', fontSize: '12px', fontWeight: 600,
                       fontFamily: 'Poppins, sans-serif' 
                     }}>
-                      {order.payment_method === 'card' ? `•••• ${order.card_last_four || '****'}` : 'Cash'}
+                      {`•••• ${order.card_last_four || '****'}`}
                     </span>
                   </div>
                 </div>
