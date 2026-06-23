@@ -92,7 +92,7 @@ const CheckoutPage: React.FC = () => {
               <img 
                 src={item.image || '/placeholder-product.png'} 
                 alt={item.name}
-                style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }}
+                style={{ width: '60px', height: '60px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }}
               />
               <div style={{ flex: 1 }}>
                 <h3 style={{ margin: 0, color: '#3E2723', fontFamily: 'Poppins, sans-serif', fontSize: '16px' }}>

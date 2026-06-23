@@ -1,7 +1,3 @@
-// ============================================
-// Sweet Stop - Constants & Configuration
-// ============================================
-
 export const NAV_ITEMS = [
   { label: 'Home', href: '/' },
   { label: 'Menu', href: '/menu' },
@@ -16,10 +12,8 @@ export const CONTACT_INFO = {
   email: 'Sweetstopyeg@gmail.com',
   hours: 'Daily: 11:00 AM - 10:00 PM',
   mapsUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2366.5!2d-113.513!3d53.623!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x53a023b7c0e3e4e1%3A0x7c0e3e4e1c0e3e4e!2s15277%20Castle%20Downs%20Rd%20NW%20%23116%2C%20Edmonton%2C%20AB%20T5X%203N5!5e0!3m2!1sen!2sca!4v1700000000000!5m2!1sen!2sca',
-  instagram: 'https://instagram.com/sweetstop',
-  facebook: 'https://facebook.com/sweetstop',
-  twitter: 'https://twitter.com/sweetstop',
-
+  instagram: 'https://www.instagram.com/sweetstopyeg/',
+  tiktok: 'https://www.tiktok.com/@sweetstopyeg',
 } as const
 
 export const COLORS = {

@@ -347,7 +347,8 @@ const GalleryContent: React.FC = () => {
 
             <span style={{
               color: '#fa6193',
-              fontSize: '24px',
+              fontSize: 'clamp(15px, 3vw, 24px)',
+              wordBreak: 'break-all',
               fontWeight: 900,
               letterSpacing: '0.5px',
               direction: 'ltr',
