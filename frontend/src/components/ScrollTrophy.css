@@ -1,0 +1,20 @@
+.scroll-trophy {
+  position: fixed;
+  right: 15px;
+  top: 80px;
+  font-size: 38px;
+  opacity: 0.95;
+  z-index: 100;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+/* موبايل */
+@media (max-width: 768px) {
+  .scroll-trophy {
+    right: 10px;
+    top: 70px;
+    font-size: 22px;
+    opacity: 0.91;
+  }
+}

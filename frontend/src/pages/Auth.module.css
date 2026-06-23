@@ -1,0 +1,155 @@
+
+.authContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+  padding: 20px;
+}
+
+.authCard {
+  background: white;
+  border-radius: 30px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(250, 97, 147, 0.15);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 15px;
+  border: 2px solid #fce4ec;
+  font-size: 15px;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  transition: all 0.3s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #fa6193;
+  box-shadow: 0 0 0 3px rgba(250, 97, 147, 0.1);
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 15px;
+  font-family: 'Poppins', sans-serif;
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 15px;
+  border: none;
+  background: #fa6193;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(250, 97, 147, 0.3);
+}
+
+.btn:disabled {
+  background: #f8bbd0;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   🔴 HIDE CHROME LOCK ICON - NUCLEAR OPTION
+   ============================================ */
+
+/* Method 1: Hide the auto-fill button */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-contacts-auto-fill-button {
+  visibility: hidden !important;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: -9999px;
+}
+
+/* Method 2: Hide caps lock indicator */
+input::-webkit-caps-lock-indicator {
+  display: none !important;
+}
+
+/* Method 3: Override the decoration container */
+input::-webkit-textfield-decoration-container {
+  display: flex !important;
+  align-items: center;
+}
+
+/* Method 4: Force background removal */
+input[type="password"],
+input[type="password"]:focus,
+input[type="password"]:active {
+  background-image: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+/* Method 5: Container approach */
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrapper input {
+  flex: 1;
+}
+
+/* Method 6: The ultimate - use a wrapper with overflow hidden */
+.passwordFieldContainer {
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.passwordFieldContainer input {
+  border: none;
+  outline: none;
+  width: 100%;
+}
