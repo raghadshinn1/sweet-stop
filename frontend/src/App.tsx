@@ -19,10 +19,6 @@ import ScrollTrophy from './components/ScrollTrophy'
 import StripePaymentPage from './pages/StripePaymentPage';
 import FallingFlags from "./components/FallingFlags";
 
-
-
-
-
 const App: React.FC = () => {
   return (
     <AuthProvider>
@@ -35,18 +31,16 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
+          {/* <Route path="/checkout" element={<CheckoutPage />} /> */}
           <Route path="/menu" element={<Menu />} />
           <Route path="/about" element={<About />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
-          <Route path="/payment-methods" element={<PaymentMethods />} />
+          {/* <Route path="/payment-methods" element={<PaymentMethods />} /> */}
           <Route path="/payment" element={<PaymentPage />} />
-          <Route path="/card-payment" element={<CardPaymentPage />} />
+          {/* <Route path="/card-payment" element={<CardPaymentPage />} /> */}
           <Route path="/orders" element={<Orders />} />
-          <Route path="/stripe-payment" element={<StripePaymentPage />} /> 
-
-
+          {/* <Route path="/stripe-payment" element={<StripePaymentPage />} /> */}
         </Routes>
       </CartProvider>
     </AuthProvider>
