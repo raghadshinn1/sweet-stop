@@ -2,79 +2,21 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 import { 
   CreditCard, 
   ArrowLeft, 
   Truck,
   Clock,
-  Loader2
 } from 'lucide-react';
-
-type PaymentMethod = 'card';
 
 const PaymentPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { } = useAuth();
   const { cartItems, totalPrice } = useCart();
-  const [paymentMethod] = useState<PaymentMethod>('card');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error] = useState('');
 
   const tax = totalPrice * 0.05;
   const finalTotal = totalPrice + tax;
-
-  const handlePlaceOrder = async () => {
-    try {
-      setLoading(true);
-      setError('');
-
-      if (!user) {
-        setError('Please login first');
-        return;
-      }
-
-      const orderData = {
-        user_id: user.id,
-        items: cartItems.map(item => ({
-          product: item.id,
-          name: item.name,
-          image: item.image,
-          price: item.price,
-          quantity: item.quantity,
-          category: item.category || 'general'
-        })),
-        shipping_address: {
-          street: user?.address?.street || '',
-          city: user?.address?.city || '',
-          province: user?.address?.province || '',
-          postalCode: user?.address?.postalCode || '',
-          phone: user?.phone || ''
-        },
-        payment_method: paymentMethod,
-        payment_status: 'pending',
-        total_amount: finalTotal,
-        subtotal: totalPrice,
-        tax: tax,
-        created_at: new Date().toISOString()
-      };
-
-      const { data, error: insertError } = await supabase
-        .from('orders')
-        .insert(orderData)
-        .select();
-
-      if (insertError) throw insertError;
-
-      const orderId = data?.[0]?.id;
-      navigate('/stripe-payment?order_id=' + orderId);
-
-    } catch (err: any) {
-      setError(err.message || 'Failed to place order');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div style={{
@@ -183,39 +125,43 @@ const PaymentPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Place Order Button */}
+        {/* Notice */}
+        <div style={{
+          background: 'white',
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '20px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          textAlign: 'center',
+          color: '#5D4037',
+          fontFamily: 'Poppins, sans-serif',
+          fontSize: '15px'
+        }}>
+          🛠️ Online payment is temporarily unavailable. Please contact us to place your order.
+        </div>
+
+        {/* Disabled Button */}
         <button
-          onClick={handlePlaceOrder}
-          disabled={loading}
+          disabled={true}
           style={{
             width: '100%',
             padding: '18px',
-            background: loading ? '#ccc' : '#fa6193',
+            background: '#ccc',
             color: 'white',
             border: 'none',
             borderRadius: '12px',
             fontSize: '18px',
             fontWeight: 'bold',
-            cursor: loading ? 'not-allowed' : 'pointer',
+            cursor: 'not-allowed',
             fontFamily: 'Poppins, sans-serif',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '12px',
-            boxShadow: '0 4px 15px rgba(250, 97, 147, 0.3)'
           }}
         >
-          {loading ? (
-            <>
-              <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
-              Processing...
-            </>
-          ) : (
-            <>
-              Proceed to Card Payment
-              <CreditCard size={20} />
-            </>
-          )}
+          Online Payment Temporarily Unavailable
+          <CreditCard size={20} />
         </button>
 
         <div style={{
@@ -230,7 +176,7 @@ const PaymentPage: React.FC = () => {
           fontFamily: 'Poppins, sans-serif'
         }}>
           <Clock size={16} />
-          You will be redirected to enter your card details
+          We apologize for the inconvenience
         </div>
         
       </div>
